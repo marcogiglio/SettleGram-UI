@@ -7,8 +7,10 @@ services:
     environment:
       FLASK_ENVIRONMENT: development
       PYTHONUNBUFFERED: 1
-    expose:
-      - "5000"
+    ports:
+      - "80:5000"
+    volumes:
+      - ./flask-app:/code
     depends_on:
       - mongodb
     networks:

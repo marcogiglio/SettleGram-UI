@@ -1,0 +1,40 @@
+
+
+{% extends "layout.html" %}
+{% block content %}
+{{super()}}
+
+<div class="container">
+  <div class = "row">
+    <table class="table">
+	<thead class= "thead-dark">
+	  <tr>
+	    <th scope="col"> Group </th>
+	    <th scope="col"> Members </th>
+	    <th scope="col"> Total Expense </th>
+        <th scope="col"> Last Expense </th>
+	  </tr>
+	</thead>
+	<tbody>
+	  {% for group in groups %}
+	  <tr>
+	    <td>
+		    <a href ="{{ url_for('user' , group_id = group.id ) }}" >
+			{{group.id}}
+		    </a>
+	    </td>
+	    <td>{{group.members}}</td>
+	    <td>{{group.total_expense}}</td>
+	    <td>{{group.last_expense}}</td>
+	  </tr>
+	  {% endfor %}
+	</tbody>
+    </table>
+  </div>
+</div>
+
+
+{% endblock %}
+
+
+
