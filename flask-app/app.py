@@ -79,22 +79,22 @@ def sign_in():
     if not does_user_exist:
         users.insert_one(user.__dict__)
     login_user(user)
-    return redirect(url_for('groups', username=telegram_login['username']), _external=True)
+    return redirect(url_for('groups', username=telegram_login['username'], _external=True))
 
 
 @app.route('/groups/<username>')
 @login_required
-def groups(username):
+def groups_fn(username):
     # Render only authorize
     if current_user.username != username:
         return render_template('login.html')
 
     group_list = list(groups.find({'members.username': username}))
-
+    print(group_list, flush=True)
     return render_template('groups.html', group_list=group_list)
 
 
-@app.route('/groups/<group_id>')
+@app.route('/group/<group_name>')
 @login_required
 def group_details():
     return render_template('details.html')

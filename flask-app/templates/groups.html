@@ -10,15 +10,21 @@
 	<thead class= "thead-dark">
 	  <tr>
 	    <th scope="col"> Group Name </th>
+	    <th scope="col"> Members </th>
 	  </tr>
 	</thead>
 	<tbody>
-	  {% for group in groups %}
+	  {% for group in group_list %}
 	  <tr>
 	    <td>
-		    <a href ="{{ url_for('user' , group_name=group.name ) }}" >
+		<a href ="{{ url_for('group_details', group_name=group.name,_external=True) }}" >
 			{{group.name}}
-		    </a>
+		</a>
+	    </td>
+	    <td>
+		{% for member in group.members %}
+	  		{{ member.username }}
+		{% endfor %}
 	    </td>
 	  </tr>
 	  {% endfor %}
