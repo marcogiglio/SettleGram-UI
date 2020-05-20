@@ -3,7 +3,7 @@
 {{super()}}
 <div class="container">
  <div class = "row">
-    <h4> Expense for Group {{ group.name }}</h4>
+    <h4> List of expenses for group named {{ group.name }}</h4>
     <table class="table">
 	<thead class= "thead-dark">
 	  <tr>
@@ -28,7 +28,26 @@
 	  {% endfor %}
 	</tbody>
     </table>
-    <h4> Total Group Expenses {{ total_expenses }}</h4>
+    <h4> Total expenditure by group: {{ total_expenses }}</h4>
+  </div>
+  <div class = "row">
+    <h4> Outstanding members balance for group named {{ group.name }}</h4>
+    <table class="table">
+	<thead class= "thead-dark">
+	  <tr>
+	      <th scope="col"> Member </th>
+	      <th scope="col"> Balance toward group </th>
+	  </tr>
+	</thead>
+	<tbody>
+	  {% for elem in balances %}
+	  <tr>
+          <td> {{ elem[0] }} </td>
+          <td> {{ elem[1] }} </td>
+	  </tr>
+	  {% endfor %}
+	</tbody>
+    </table>
   </div>
 </div>
 

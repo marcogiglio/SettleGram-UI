@@ -5,6 +5,7 @@ from flask_login import UserMixin, LoginManager, login_required, current_user, l
 from flask_bootstrap import Bootstrap
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hmac, hashes
+from utils import get_balance, generate_list_payments
 
 client = MongoClient('mongodb', 27017)
 db = client.settlegram
@@ -98,7 +99,8 @@ def groups_fn(username):
 def group_details(group_name):
     group = groups.find_one({'name': group_name})
     total_expenses = sum(map(lambda x: x['amount'], group['expenses']))
-    return render_template('details.html', group=group, total_expenses=total_expenses)
+    group_balance = get_balance(group['expenses']).items()
+    return render_template('details.html', group=group, total_expenses=total_expenses, balances=group_balance)
 
 
 @app.route('/<username>')
