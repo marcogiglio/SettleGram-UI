@@ -22,6 +22,7 @@ services:
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
   settlegram:
     build: ./SettleGram
+    command: python -u main.py
     env_file:
       - ./secrets.env
     environment:
@@ -32,10 +33,12 @@ services:
       - test-network
   flask:
     build: ./flask-app
+    volumes:
+      - ./flask-app:/code
     env_file:
       - ./secrets.env
     environment:
-      FLASK_ENVIRONMENT: development
+      FLASK_ENV: development
       PYTHONUNBUFFERED: 1
     expose:
       - "5000"

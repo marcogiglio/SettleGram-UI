@@ -7,5 +7,5 @@ ENV FLASK_RUN_HOST 0.0.0.0
 COPY requirements.txt requirements.txt
 RUN python -m pip install -r requirements.txt
 
-COPY . .
+COPY . /code
 CMD ["flask", "run"]

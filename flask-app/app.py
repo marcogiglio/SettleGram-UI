@@ -1,6 +1,6 @@
 from pymongo import MongoClient
 import os
-from flask import Flask, render_template, redirect, url_for
+from flask import Flask, render_template, redirect, url_for, request
 from flask_login import UserMixin, LoginManager, login_required, current_user, login_user, logout_user
 from flask_bootstrap import Bootstrap
 from cryptography.hazmat.backends import default_backend
@@ -13,7 +13,7 @@ users = db.frontend_users
 app = Flask(__name__)
 Bootstrap(app)
 
-flask_env = os.getenv('FLASK_ENVIRONMENT')
+flask_env = os.getenv('FLASK_ENV')
 secret_key = os.getenv('SECRET_KEY')
 if flask_env == 'development':
     app.config.update(
@@ -35,10 +35,11 @@ login_manager.login_view = "sign_in"
 
 @app.route('/')
 def index():
-    if os.getenv('FLASK_ENVIRONMENT') == 'development':
+    if os.getenv('FLASK_ENV') == 'development':
         data_auth_url = 'https://test.settlegram.app/sign_in' 
     else:
         data_auth_url = 'https://settlegram.app/sign_in'
+
     return render_template('login.html', data_auth_url=data_auth_url)
 
 
@@ -53,25 +54,23 @@ def sign_in():
     str_login_info = '\n'.join(concat_kv)
 
     # Verify HMAC Signature over parameters
-    bot_token = os.getenv('TOKEN_KEY')
+    bot_token = bytearray(os.getenv('TOKEN_KEY'), 'utf-8')
     key = hashes.Hash(hashes.SHA256(), backend=default_backend())
     key.update(bot_token)
     key = key.finalize()
-    try:
-        h = hmac.HMAC(key, hashes.SHA256(), backend=default_backend())
-        h.update(bytearray(str_login_info, 'utf-8'))
-        h.verify(bytes.fromhex(telegram_login['hash']))
-        user = User(telegram_id=telegram_login['id'],
-                first_name=telegram_login['first_name'],
-                username=telegram_login['username'])
+    
+    h = hmac.HMAC(key, hashes.SHA256(), backend=default_backend())
+    h.update(bytearray(str_login_info, 'utf-8'))
+    h.verify(bytes.fromhex(telegram_login['hash']))
+    user = User(telegram_id=telegram_login['id'],
+            first_name=telegram_login['first_name'],
+            username=telegram_login['username'])
 
-        does_user_exist = users.find_one({'username': telegram_login['username']})
-        if not does_user_exist:
-            users.insert_one(user.__dict__)
-        login_user(user)
-        return redirect(url_for('groups/{}'.format(username), _external=True))
-    except Exception:
-        return render_template('login.html')
+    does_user_exist = users.find_one({'username': telegram_login['username']})
+    if not does_user_exist:
+        users.insert_one(user.__dict__)
+    login_user(user)
+    return redirect(url_for('groups/{}'.format(username), _external=True))
 
 
 @app.route('/groups/<username>')
