@@ -90,7 +90,6 @@ def groups_fn(username):
         return render_template('login.html')
 
     group_list = list(groups.find({'members.username': username}))
-    print(group_list, flush=True)
     return render_template('groups.html', group_list=group_list)
 
 
@@ -101,6 +100,21 @@ def group_details(group_name):
     total_expenses = sum(map(lambda x: x['amount'], group['expenses']))
     return render_template('details.html', group=group, total_expenses=total_expenses)
 
+
+@app.route('/<username>')
+@login_required
+def member_details(username):
+    group_list = list(groups.find({'members.username': username}))
+    # Show only groups where current_user and the inspected user are both members
+    filtered_group_list = []
+    for group in group_list:
+        for member in group['members']:
+            if member.username == current_user.username:
+                filtered_group_list.append(group)
+    
+    return render_template(
+            'member_details.html', 
+            group_list=filtered_group_list)
 
 @login_manager.user_loader
 def load_user(user_id):
