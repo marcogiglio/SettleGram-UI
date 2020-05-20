@@ -17,7 +17,7 @@ flask_env = os.getenv('FLASK_ENVIRONMENT')
 secret_key = os.getenv('SECRET_KEY')
 if flask_env == 'development':
     app.config.update(
-        SECRET_KEY=b'XYZ'
+        SECRET_KEY=b'XYZ',
         SERVER_NAME='test.settlegram.app',
         PREFERRED_URL_SCHEME='https'
     )
