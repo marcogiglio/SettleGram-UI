@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+{% block content %}
+{{super()}}
+<div class="container">
+ <div class = "row">
+    <h4> Expense across all groups for {{ username }}</h4>
+    <table class="table">
+	<thead class= "thead-dark">
+	  <tr>
+	      <th scope="col"> Who Paid</th>
+	      <th scope="col"> Purpose </th>
+          <th scope="col"> Amount </th>
+	  </tr>
+	</thead>
+	<tbody>
+	  {% for group in group_list %}
+          	{% for expense in group.expenses %}
+			{% for member in expense.for_whom %}
+				{% if member.username == username %}	
+				      <tr>
+					  <td> {{ expense.who_paid.username }} </td>
+					  <td> {{ expense.purpose }} </td>
+					  <td> {{ expense.amount }} </td>
+				       </tr>
+			        {% endif %}
+		 	 {% endfor %}
+		{% endfor %}
+	   {% endfor %}
+	</tbody>
+    </table>
+    <h4> Total paid {{ total_paid }}</h4>
+  </div>
+</div>
+
+{% endblock %}
+
+
+
