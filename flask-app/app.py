@@ -18,8 +18,8 @@ secret_key = os.getenv('SECRET_KEY')
 if flask_env == 'development':
     app.config.update(
         SECRET_KEY=b'XYZ'
-        #SERVER_NAME='localhost',
-        #PREFERRED_URL_SCHEME='http'
+        SERVER_NAME='test.settlegram.app',
+        PREFERRED_URL_SCHEME='https'
     )
 else:
     app.config.update(
@@ -36,7 +36,7 @@ login_manager.login_view = "sign_in"
 @app.route('/')
 def index():
     if os.getenv('FLASK_ENVIRONMENT') == 'development':
-        data_auth_url = 'http://localhost/sign_in' 
+        data_auth_url = 'https://test.settlegram.app/sign_in' 
     else:
         data_auth_url = 'https://settlegram.app/sign_in'
     return render_template('login.html', data_auth_url=data_auth_url)
