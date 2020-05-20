@@ -1,0 +1,5 @@
+secrets.env
+db-data
+data/certbot
+db-data-test
+flask-app/__pycache__

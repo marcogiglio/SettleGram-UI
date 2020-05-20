@@ -6,11 +6,11 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./data/nginx_prod:/etc/nginx/conf.d
+      - ./data/nginx_test:/etc/nginx/conf.d
       - ./data/certbot/conf:/etc/letsencrypt
       - ./data/certbot/www:/var/www/certbot
     networks:
-      - mynetwork
+      - test-network
     command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
     depends_on:
       - flask
@@ -29,10 +29,9 @@ services:
     depends_on:
       - mongodb
     networks:
-      - mynetwork
+      - test-network
   flask:
     build: ./flask-app
-    command: gunicorn app:app --bind 0.0.0.0:5000
     env_file:
       - ./secrets.env
     environment:
@@ -43,18 +42,18 @@ services:
     depends_on:
       - mongodb
     networks:
-      - mynetwork
+      - test-network
   mongodb:
     image: mongo:latest
     ports:
       - "27017:27017"
     volumes:
-      - ./db-data:/data/db
+      - ./db-data-test:/data/db
     networks:
-      - mynetwork
+      - test-network
 
 volumes:
-  db-data:
+  db-data-test:
 
 networks:
-  mynetwork:
+  test-network:
