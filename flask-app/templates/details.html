@@ -16,7 +16,7 @@
 	<tbody>
 	  {% for expense in group.expenses %}
 	  <tr>
-          <td> {{ expense.who_paid }} </td>
+          <td> {{ expense.who_paid.username }} </td>
           <td> {{ expense.purpose }} </td>
           <td> {{ expense.amount }} </td>
           <td>
