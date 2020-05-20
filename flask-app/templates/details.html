@@ -1,10 +1,35 @@
-
-
 {% extends "layout.html" %}
 {% block content %}
 {{super()}}
 <div class="container">
-
+ <div class = "row">
+    <h4> Expense for Group {{ group.name }}</h4>
+    <table class="table">
+	<thead class= "thead-dark">
+	  <tr>
+	      <th scope="col"> Who Paid</th>
+	      <th scope="col"> Purpose </th>
+          <th scope="col"> Amount </th>
+          <th scope="col"> For Whom </th>
+	  </tr>
+	</thead>
+	<tbody>
+	  {% for expense in group.expenses %}
+	  <tr>
+          <td> {{ expense.who_paid }} </td>
+          <td> {{ expense.purpose }} </td>
+          <td> {{ expense.amount }} </td>
+          <td>
+          {% for member in expense.for_whom %}
+	  		{{ member.username }}
+		  {% endfor %}
+          </td>
+	  </tr>
+	  {% endfor %}
+	</tbody>
+    </table>
+    <h4> Total Group Expenses {{ total_expenses }}</h4>
+  </div>
 </div>
 
 {% endblock %}

@@ -96,8 +96,10 @@ def groups_fn(username):
 
 @app.route('/group/<group_name>')
 @login_required
-def group_details():
-    return render_template('details.html')
+def group_details(group_name):
+    group = groups.find_one({'name': group_name})
+    total_expenses = sum(map(lambda x: x['amount'], group['expenses']))
+    return render_template('details.html', group=group, total_expenses=total_expenses)
 
 
 @login_manager.user_loader
