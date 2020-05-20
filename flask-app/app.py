@@ -1,6 +1,6 @@
 from pymongo import MongoClient
 import os
-from flask import Flask, render_template, redirect, url_for, request
+from flask import flash, Flask, render_template, redirect, url_for, request
 from flask_login import UserMixin, LoginManager, login_required, current_user, login_user, logout_user
 from flask_bootstrap import Bootstrap
 from cryptography.hazmat.backends import default_backend
@@ -80,12 +80,12 @@ def sign_in():
     if not does_user_exist:
         users.insert_one(user.__dict__)
     login_user(user)
-    return redirect(url_for('groups', username=telegram_login['username'], _external=True))
+    return redirect(url_for('set_groups', username=telegram_login['username'], _external=True))
 
 
-@app.route('/groups/<username>')
+@app.route('/set_groups/<username>')
 @login_required
-def groups_fn(username):
+def set_groups(username):
     # Render only authorize
     if current_user.username != username:
         return render_template('login.html')
@@ -97,26 +97,42 @@ def groups_fn(username):
 @app.route('/group/<group_name>')
 @login_required
 def group_details(group_name):
+    
     group = groups.find_one({'name': group_name})
+    is_member = next(
+            filter(lambda x: x['username'] == current_user.username, 
+                group['members']), None)
+    if not is_member:
+        flash(u'Unauthorized','danger')
+        return render_template('login.html')
     total_expenses = sum(map(lambda x: x['amount'], group['expenses']))
     group_balance = get_balance(group['expenses']).items()
     return render_template('details.html', group=group, total_expenses=total_expenses, balances=group_balance)
 
 
-@app.route('/<username>')
+@app.route('/member/<username>')
 @login_required
-def member_details(username):
+def member(username):
     group_list = list(groups.find({'members.username': username}))
     # Show only groups where current_user and the inspected user are both members
     filtered_group_list = []
     for group in group_list:
         for member in group['members']:
-            if member.username == current_user.username:
+            if member['username'] == current_user.username:
                 filtered_group_list.append(group)
-    
+     
+    print(filtered_group_list, flush=True)
+    total_paid = 0
+    for group in filtered_group_list:
+        paid_expenses = list(filter(lambda x: x['who_paid']['username'] == username, group['expenses']))
+        print(paid_expenses, flush=True)
+        total_paid += sum(map(lambda x: x['amount'], paid_expenses))
+
     return render_template(
             'member_details.html', 
-            group_list=filtered_group_list)
+            username=username,
+            group_list=filtered_group_list,
+            total_paid=total_paid)
 
 @login_manager.user_loader
 def load_user(user_id):

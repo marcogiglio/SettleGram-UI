@@ -16,13 +16,19 @@
 	<tbody>
 	  {% for expense in group.expenses %}
 	  <tr>
-          <td> {{ expense.who_paid.username }} </td>
+          <td> 
+	  	<a href="{{ url_for('member', username=expense.who_paid.username, _external=True) }}">
+	  		{{ expense.who_paid.username }}
+		</a>
+	  </td>
           <td> {{ expense.purpose }} </td>
           <td> {{ expense.amount }} </td>
           <td>
           {% for member in expense.for_whom %}
+	  	<a href="{{ url_for('member', username=member.username, _external=True) }}">
 	  		{{ member.username }}
-		  {% endfor %}
+		</a>
+	   {% endfor %}
           </td>
 	  </tr>
 	  {% endfor %}
