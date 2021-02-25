@@ -7,4 +7,4 @@ Flask==1.1.2
 Flask-Login==0.5
 Flask-Bootstrap==3.3.7.1
 PyJWT==1.7.1
-cryptography==2.9.2
+cryptography==3.3.2
